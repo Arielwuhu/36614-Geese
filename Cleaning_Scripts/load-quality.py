@@ -13,6 +13,12 @@ Algo:
 """
 
 import pandas as pd
+import numpy as np
+import sys
 
 
-hhs_df = pd.read_csv("")
+hhs_df = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
+
+# Replace -999999.0 with, np.nan,
+hhs_df.replace(-999999.0, np.nan, inplace=True)
+hhs_df["collection_week"] = pd.to_datetime(hhs_df["collection_week"])
