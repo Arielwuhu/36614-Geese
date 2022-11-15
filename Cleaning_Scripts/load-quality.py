@@ -15,17 +15,17 @@ Algo:
 import pandas as pd
 import numpy as np
 import sys
-import psycopg2  # Can't find this module even though I installed itS
+import psycopg  # Can't find this module even though I installed itS
 import credentials
 
 
 # Connect to server
-conn = psycopg2.connect(
+conn = psycopg.connect(
     host="sculptor.stat.cmu.edu", dbname=credentials.DB_USER,
     user=credentials.DB_USER, password=credentials.DB_PASSWORD
 )
 
-# hhs_df = pd.read_csv(sys.argv[1])  # Argument input
+# hhs_df = pd.read_csv("Data/HHS/"+sys.argv[1])  # Argument input
 hhs_df = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
 
 # Data Cleaning
