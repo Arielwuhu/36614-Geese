@@ -17,8 +17,8 @@ import psycopg
 import sys
 import credentials
 
-# hhs = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
-hhs = pd.read_csv(sys.argv[1]) # hhs_df = pd.read_csv("Data/HHS/"+sys.argv[1])
+hhs = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
+#hhs = pd.read_csv(sys.argv[1]) # hhs_df = pd.read_csv("Data/HHS/"+sys.argv[1])
 # Convert -999999 to NaN
 hhs.replace(-999999, np.NaN, inplace=True)
 # Parse dates into Python date objects
@@ -106,7 +106,8 @@ with conn.transaction():
                 cur.execute("SAVEPOINT save2")
                 with conn.transaction():  
                     insert = ("INSERT INTO Hospital_Coord "
-                            "VALUES(%s, %s, %s, %s)")
+                            "VALUES(%s, %s, %s, %s) "
+                            "ON CONFLICT DO NOTHING")  # if hospital_pk unique is violated
                     cur.execute(insert, tuple(row_coord))
 
 
@@ -126,5 +127,5 @@ with conn.transaction():
     print(num_rows_inserted_coord, "inserted in Hospital_Coord")  # Hospital_Coord
     df_error_coord.to_csv("Error_Hospital_Coord.csv", index = False)
 
-# now we commit the entire transaction
-# conn.commit()
+conn.commit()  # Commit the entire transaction
+conn.close()  # Close connection
