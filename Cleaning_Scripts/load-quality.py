@@ -56,12 +56,7 @@ hhs_insert = hhs.loc[:,key]
 key_coord = ["hospital_pk", "longitude", "latitude", "fips_code"]
 hhs_coord = hhs.loc[:,key_coord]
 
-
-
-
-
-
-# Connect to server
+# Connect to server (Donny)
 conn = psycopg.connect(
     host="sculptor.stat.cmu.edu", dbname=credentials.DB_USER,
     user=credentials.DB_USER, password=credentials.DB_PASSWORD
@@ -71,6 +66,7 @@ conn = psycopg.connect(
 #     host="sculptor.stat.cmu.edu", dbname="xiyaowan",
 #     user="xiyaowan", password="ooXee7ad9"
 # )
+
 # Split the insertions across the Hospital_Stat table and Hospital_Coord table
 cur = conn.cursor()
 
@@ -100,7 +96,6 @@ with conn.transaction():
             print("insert failed in row " + str(index))
             df_error = pd.concat(df_error, row)
 
-            # add additional logging, error handling here
         else:
             # no exception happened, so we continue without reverting the savepoint
             num_rows_inserted += 1
@@ -121,7 +116,6 @@ with conn.transaction():
                 print("insert failed in row " + str(index_coord))
                 df_error_coord = pd.concat(df_error_coord, row_coord)
 
-                # add additional logging, error handling here
             else:
                 # no exception happened, so we continue without reverting the savepoint
                 num_rows_inserted_coord += 1
@@ -131,5 +125,6 @@ with conn.transaction():
 
     print(num_rows_inserted_coord, "inserted in Hospital_Coord")  # Hospital_Coord
     df_error_coord.to_csv("Error_Hospital_Coord.csv", index = False)
+
 # now we commit the entire transaction
 # conn.commit()
