@@ -17,7 +17,7 @@ import psycopg
 import sys
 import credentials
 
-# hhs_df = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
+# hhs = pd.read_csv("Data/HHS/2022-09-23-hhs-data.csv")
 hhs = pd.read_csv(sys.argv[1]) # hhs_df = pd.read_csv("Data/HHS/"+sys.argv[1])
 # Convert -999999 to NaN
 hhs.replace(-999999, np.NaN, inplace=True)
@@ -52,6 +52,15 @@ key = ["hospital_pk", "collection_week","all_adult_hospital_beds_7_day_avg",\
             "inpatient_beds_used_covid_7_day_avg", "staffed_icu_adult_patients_confirmed_covid_7_day_avg"]
 hhs_insert = hhs.loc[:,key]
 
+# Hospital_Coord variables
+key_coord = ["hospital_pk", "longitude", "latitude", "fips_code"]
+hhs_coord = hhs.loc[:,key_coord]
+
+
+
+
+
+
 # Connect to server
 conn = psycopg.connect(
     host="sculptor.stat.cmu.edu", dbname=credentials.DB_USER,
@@ -62,27 +71,28 @@ conn = psycopg.connect(
 #     host="sculptor.stat.cmu.edu", dbname="xiyaowan",
 #     user="xiyaowan", password="ooXee7ad9"
 # )
-
+# Split the insertions across the Hospital_Stat table and Hospital_Coord table
 cur = conn.cursor()
 
-df_error = pd.DataFrame(columns=key)
+df_error = pd.DataFrame(columns=key) # Hospital_Stat
 num_rows_inserted = 0
+
+df_error_coord = pd.DataFrame(columns=key_coord) # Hospital_Coord
+num_rows_inserted_coord = 0
 
 # This is to truncate the table
 # with conn.transaction():
 #     cur.execute("TRUNCATE Hospital_Stat ")
 
 with conn.transaction():
-    for index, row in hhs_insert.iterrows():
+    for index, row in hhs_insert.iterrows():  # Hospital_Stat
         try:
             # make a new SAVEPOINT -- like a save in a video game
             cur.execute("SAVEPOINT save1")
             with conn.transaction():  
-                # now insert the data
                 insert = ("INSERT INTO Hospital_Stat "
                         "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
                 cur.execute(insert, tuple(row))
-
 
         except Exception as e:
             # if an exception/error happens in this block, Postgres goes back to
@@ -94,7 +104,32 @@ with conn.transaction():
         else:
             # no exception happened, so we continue without reverting the savepoint
             num_rows_inserted += 1
-    print(num_rows_inserted)
-    df_error.to_csv("Error_row.csv", index = False)
+
+        for index_coord, row_coord in hhs_coord.iterrows():  # Hospital_Coord
+            try:
+                # make a new SAVEPOINT -- like a save in a video game
+                cur.execute("SAVEPOINT save2")
+                with conn.transaction():  
+                    insert = ("INSERT INTO Hospital_Coord "
+                            "VALUES(%s, %s, %s, %s)")
+                    cur.execute(insert, tuple(row_coord))
+
+
+            except Exception as e:
+                # if an exception/error happens in this block, Postgres goes back to
+                # the last savepoint upon exiting the `with` block
+                print("insert failed in row " + str(index_coord))
+                df_error_coord = pd.concat(df_error_coord, row_coord)
+
+                # add additional logging, error handling here
+            else:
+                # no exception happened, so we continue without reverting the savepoint
+                num_rows_inserted_coord += 1
+
+    print(num_rows_inserted, "inserted in Hospital_Stat")  # Hospital_Stat
+    df_error.to_csv("Error_Hospital_Stat.csv", index = False)
+
+    print(num_rows_inserted_coord, "inserted in Hospital_Coord")  # Hospital_Coord
+    df_error_coord.to_csv("Error_Hospital_Coord.csv", index = False)
 # now we commit the entire transaction
 # conn.commit()
