@@ -50,7 +50,7 @@ hhs_coor = hhs.loc[:,key_coor]
 
 conn = psycopg.connect(
     host="sculptor.stat.cmu.edu", dbname="xiyaowan",
-    user="xiyaowan", password="ooXee7ad9"
+    user="xiyaowan", password=""
 )
 cur = conn.cursor()
 
