@@ -79,7 +79,7 @@ with conn.transaction():
         except Exception as e:
             # if an exception/error happens in this block, Postgres goes back to
             # the last savepoint upon exiting the `with` block
-            print("insert failed in row " + str(index))
+            print("insert failed in row " + str(index)+ ";", e)
             error_index.append(index)
 
             # add additional logging, error handling here
@@ -119,9 +119,8 @@ with conn.transaction():
         except Exception as e:
             # if an exception/error happens in this block, Postgres goes back to
             # the last savepoint upon exiting the `with` block
-            print("insert failed in row " + str(index))
+            print("insert failed in row " + str(index) + ":", e)
             error_index.append(index)
-            print(e)
 
             # add additional logging, error handling here
         else:
