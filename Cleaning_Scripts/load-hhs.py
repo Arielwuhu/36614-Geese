@@ -7,7 +7,7 @@ import numpy as np
 import psycopg
 import sys
 
-hhs = pd.read_csv(sys.argv[1])
+hhs = pd.read_csv("../Data/HHS/" + sys.argv[1])
 # Convert -999999 to NaN
 hhs.replace(-999999, None, inplace=True)
 # Parse dates into Python date objects
@@ -21,7 +21,6 @@ hhs['latitude'] = hhs['geocoded_hospital_address'].str.replace('POINT','',regex=
     .str.replace('(','',regex=True).str.replace(')','',regex=True).str.strip().str.split(' ') \
     .apply(lambda d: d if isinstance(d, list) else [None,None])
 hhs['latitude'] = hhs['latitude'].apply(lambda d: d[0])
-
 
 
 # Extract longitude values
@@ -43,6 +42,7 @@ key = ["hospital_pk", "collection_week", \
         "staffed_icu_adult_patients_confirmed_covid_7_day_avg"]
 hhs_insert = hhs.loc[:,key]
 
+
 # Key of Hospital_Coord
 key_coor = ["hospital_pk", "longitude", "latitude", "fips_code"]
 hhs_coor = hhs.loc[:,key_coor]
@@ -55,7 +55,7 @@ conn = psycopg.connect(
 cur = conn.cursor()
 
 
-# This is to truncate the table
+# # This is to truncate the table
 # with conn.transaction():
 #     cur.execute("TRUNCATE Hospital_Stat")
 #     cur.execute("TRUNCATE Hospital_Coord")
@@ -128,7 +128,7 @@ with conn.transaction():
             # no exception happened, so we continue without reverting the savepoint
             num_rows_inserted += 1
 
-    print(num_rows_inserted)
+    print("A total of" + str(num_rows_inserted) + "are inserted")
     df_error = hhs_coor.iloc[error_index]
     df_error.to_csv("Error_row_coord.csv", index = False)
 # now we commit the entire transaction
