@@ -11,7 +11,7 @@ CREATE TABLE Hospital_Info(
 	city text,
 	state char(2),
 	zip_code varchar(5),
-      county text,
+    county text,
 	ownership text,
 	emergency boolean DEFAULT false);
 
