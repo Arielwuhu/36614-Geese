@@ -134,9 +134,17 @@ with conn.transaction():
             with conn.transaction():
                 # now insert  (hospital_pk, rating_year, rating) into the data
                 insert = ("INSERT INTO Rating "
-                          "VALUES (%s,%s,%s)")
+                          "VALUES (%(hospital_pk)s, %(rating_year)s,\
+                                  %(rating)s)"
+                          "ON CONFLICT (rating_year) DO UPDATE "
+                          "SET hospital_pk = %(hospital_pk)s,\
+                               rating = %(rating)s")
 
-                cur.execute(insert, tuple(row))
+                cur.execute(insert, {
+                    "hospital_pk": row['Facility ID'],
+                    "rating_year": row['rating_year'],
+                    "rating": row['rating']
+                })
         except Exception as e:
             # if an exception/error happens in this block, Postgres
             # goes back to the last savepoint upon exiting the `with` block
