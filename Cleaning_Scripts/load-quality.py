@@ -136,7 +136,7 @@ with conn.transaction():
                 insert = ("INSERT INTO Rating "
                           "VALUES (%(hospital_pk)s, %(rating_year)s,\
                                   %(rating)s)"
-                          "ON CONFLICT (rating_year) DO UPDATE "
+                          "ON CONFLICT (hospital_pk, rating_year) DO UPDATE "
                           "SET hospital_pk = %(hospital_pk)s,\
                                rating = %(rating)s")
 
