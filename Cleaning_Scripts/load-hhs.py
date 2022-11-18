@@ -8,7 +8,7 @@ import psycopg
 import sys
 
 
-# Load file
+# Load data
 hhs = pd.read_csv("../Data/HHS/" + sys.argv[1])
 # Convert -999999 to NaN
 hhs.replace(-999999, None, inplace=True)
@@ -70,6 +70,7 @@ cur = conn.cursor()
 
 # Insert into Hospital_Stat
 with conn.transaction():
+
     num_rows_inserted = 0
     error_index = []
     for index, row in hhs_insert.iterrows():
@@ -86,12 +87,12 @@ with conn.transaction():
             # if an exception/error happens in this block,
             # Postgres goes back to the last savepoint upon
             # exiting the `with` block and print error
-            print("insert failed in row " + str(index) + ";", e)
+            print("insert failed in row " + str(index) + ":", e)
             error_index.append(index)
 
         else:
             num_rows_inserted += 1
-    print(num_rows_inserted)
+    print("A total of " + str(num_rows_inserted) + " are inserted")
     df_error = hhs_insert.iloc[error_index]
     df_error.to_csv("Error_row_stat.csv", index=False)
 # # now we commit the entire transaction
@@ -100,6 +101,7 @@ conn.commit()
 
 # Insert into Hospital_Coord
 with conn.transaction():
+
     num_rows_inserted = 0
     error_index = []
     for index, row in hhs_coor.iterrows():
@@ -132,7 +134,7 @@ with conn.transaction():
         else:
             num_rows_inserted += 1
 
-    print("A total of" + str(num_rows_inserted) + "are inserted")
+    print("A total of " + str(num_rows_inserted) + " are inserted")
     df_error = hhs_coor.iloc[error_index]
     df_error.to_csv("Error_row_coord.csv", index=False)
 # now we commit the entire transaction
