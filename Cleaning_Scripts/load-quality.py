@@ -69,20 +69,21 @@ with conn.transaction():
         try:
             # make a new SAVEPOINT
             cur.execute("SAVEPOINT save1")
-            with conn.transaction():  
+            with conn.transaction():
                 # now insert  (hospital_pk, rating_year, rating) into the data
                 insert = ("INSERT INTO Hospital_Info "
                           "VALUES(%(hospital_pk)s, %(Facility Name)s,\
-                                  %(Address)s, %(City)s, %(State)s, %(ZIP Code)s,\
-                                  %(Hospital Ownership)s, %(Emergency Services)s) "
+                                  %(Address)s, %(City)s, %(State)s,\
+                                  %(ZIP Code)s,%(Hospital Ownership)s,\
+                                  %(Emergency Services)s) "
                           "ON CONFLICT (hospital_pk) DO UPDATE "
-                          "SET Facility Name = %(Facility Name)s,\
+                          "SET name = %(Facility Name)s,\
                                Address = %(Address)s,\
                                City = %(City)s,\
                                State = %(State)s,\
-                               ZIP Code = %(ZIP Code)s,\
-                               Hospital Ownership = %(Hospital Ownership)s,\
-                               Emergency Services = %(Emergency Services)s")
+                               zip_code = %(ZIP Code)s,\
+                               Ownership = %(Hospital Ownership)s,\
+                               Emergency = %(Emergency Services)s")
                 cur.execute(insert, {
                     "hospital_pk": row['Facility ID'],
                     "Facility Name": row['Facility Name'],
