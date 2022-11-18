@@ -21,3 +21,6 @@ This repository contains
 
 3. Cleaning scripts to input our data into the SQL
 data tables where our data is being stored.
+
+    - load_HHS.py
+    - load_quality.py
