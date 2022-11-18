@@ -76,7 +76,7 @@ with conn.transaction():
                 insert = ("INSERT INTO Hospital_Info "
                           "VALUES(%(hospital_pk)s, %(name)s,\
                                   %(address)s, %(city)s, %(state)s,\
-                                  %(zip_code)s, %(county)%,\
+                                  %(zip_code)s, %(county)s,\
                                   %(ownership)s,\
                                   %(emergency)s) "
                           "ON CONFLICT (hospital_pk) DO UPDATE "
@@ -95,7 +95,7 @@ with conn.transaction():
                     "city": row['City'],
                     "state": row['State'],
                     "zip_code": row['ZIP Code'],
-                    "county": row['county'],
+                    "county": row['County Name'],
                     "ownership": row['Hospital Ownership'],
                     "emergency": row['Emergency Services'],
                 })
