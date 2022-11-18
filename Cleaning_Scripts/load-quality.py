@@ -142,8 +142,8 @@ with conn.transaction():
 
                 cur.execute(insert, {
                     "hospital_pk": row['Facility ID'],
-                    "rating_year": row['rating_year'],
-                    "rating": row['rating']
+                    "rating_year": row['Rating year'],
+                    "rating": row['Hospital overall rating']
                 })
         except Exception as e:
             # if an exception/error happens in this block, Postgres
