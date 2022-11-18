@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import psycopg
 import sys
+import credentials
 
 
 # Load data
@@ -56,8 +57,8 @@ hhs_coor = hhs.loc[:, key_coor]
 
 
 conn = psycopg.connect(
-    host="sculptor.stat.cmu.edu", dbname="DB_USER",
-    user="DB_USER", password="DB_PASSWORD"
+    host="sculptor.stat.cmu.edu", dbname=credentials.DB_USER,
+    user=credentials.DB_USER, password=credentials.DB_PASSWORD
 )
 cur = conn.cursor()
 
@@ -80,7 +81,8 @@ with conn.transaction():
             with conn.transaction():
                 # now insert the data
                 insert = ("INSERT INTO Hospital_Stat "
-                          "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                          "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                          "ON CONFLICT (hos_week) DO NOTHING")
                 cur.execute(insert, tuple(row))
 
         except Exception as e:
