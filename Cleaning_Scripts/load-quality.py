@@ -60,11 +60,12 @@ key = ['Facility ID', 'Facility Name',
        'Hospital Ownership', 'Emergency Services']
 df_error = pd.DataFrame(columns=key)
 
-num_rows_inserted = 0
 
 # make a new transaction
 with conn.transaction():
 
+    num_rows_inserted = 0
+    error_index = []
     for index, row in info_table.iterrows():
         try:
             # make a new SAVEPOINT
@@ -98,13 +99,14 @@ with conn.transaction():
             # if an exception/error happens in this block, Postgres goes
             # back to the last savepoint upon exiting the `with` block
             print("insert failed in row " + str(index) + ":", e)
-            df_error = pd.concat([df_error, row])
+            error_index.append(index)
 
         else:
             num_rows_inserted += 1
 
     print('Inserted ' + str(num_rows_inserted) + ' rows for '
           'Rating_Time table.')
+    df_error = info_table.iloc[error_index]
     df_error.to_csv("Error_row_hospitalinfo.csv", index=False)
 
 # now we commit the entire transaction
@@ -123,11 +125,12 @@ key = ["hospital_pk",
        "Rating year"]
 df_error = pd.DataFrame(columns=key)
 
-num_rows_inserted = 0
 
 # make a new transaction
 with conn.transaction():
 
+    num_rows_inserted = 0
+    error_index = []
     for index, row in rate_table.iterrows():
         try:
             # make a new SAVEPOINT
@@ -150,13 +153,14 @@ with conn.transaction():
             # if an exception/error happens in this block, Postgres
             # goes back to the last savepoint upon exiting the `with` block
             print("insert failed in row " + str(index) + ":", e)
-            df_error = pd.concat([df_error, row])
+            error_index.append(index)
 
         else:
             num_rows_inserted += 1
 
     print('Inserted ' + str(num_rows_inserted) + ' rows for '
           'Rating_Time table.')
+    df_error = rate_table.iloc[error_index]
     df_error.to_csv("Error_row_ratingtime.csv", index=False)
 
 # now we commit the entire transaction
