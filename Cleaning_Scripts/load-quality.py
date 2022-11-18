@@ -92,8 +92,8 @@ conn.commit()
 '''3.2 Rating(hospital_pk, rating_year, rating)'''
 # Create a seperate table containing useful columns
 rate_table = quality.loc[:, ["Facility ID",
-                           "Hospital overall rating",
-                           "Ratingyear"]]
+                             "Hospital overall rating",
+                             "Ratingyear"]]
 
 # Container to record insert failed row
 key = ["hospital_pk",
