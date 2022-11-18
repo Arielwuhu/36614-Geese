@@ -22,6 +22,7 @@ quality = quality.replace('Not Available', None)
 quality = quality.replace(np.nan, None)
 # Insert date column as python date object
 date = sys.argv[1]
+date = date.split('-')[0]
 quality['Rating year'] = date
 
 
@@ -68,11 +69,30 @@ with conn.transaction():
         try:
             # make a new SAVEPOINT
             cur.execute("SAVEPOINT save1")
-            with conn.transaction():
-                # now insert columns into the data
+            with conn.transaction():  
+                # now insert  (hospital_pk, rating_year, rating) into the data
                 insert = ("INSERT INTO Hospital_Info "
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
-                cur.execute(insert, tuple(row))
+                          "VALUES(%(hospital_pk)s, %(Facility Name)s,\
+                                  %(Address)s, %(City)s, %(State)s, %(ZIP Code)s,\
+                                  %(Hospital Ownership)s, %(Emergency Services)s) "
+                          "ON CONFLICT (hospital_pk) DO UPDATE "
+                          "SET Facility Name = %(Facility Name)s,\
+                               Address = %(Address)s,\
+                               City = %(City)s,\
+                               State = %(State)s,\
+                               ZIP Code = %(ZIP Code)s,\
+                               Hospital Ownership = %(Hospital Ownership)s,\
+                               Emergency Services = %(Emergency Services)s")
+                cur.execute(insert, {
+                    "hospital_pk": row['Facility ID'],
+                    "Facility Name": row['Facility Name'],
+                    "Address": row['Address'],
+                    "City": row['City'],
+                    "State": row['State'],
+                    "ZIP Code": row['ZIP Code'],
+                    "Hospital Ownership": row['Hospital Ownership'],
+                    "Emergency Services": row['Emergency Services'],
+                })
         except Exception as e:
             # if an exception/error happens in this block, Postgres goes
             # back to the last savepoint upon exiting the `with` block
