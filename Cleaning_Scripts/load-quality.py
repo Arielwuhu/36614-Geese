@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import sys
 import psycopg
+import credentials
 
 
 '''1. Read data'''
@@ -27,8 +28,8 @@ quality['Rating year'] = date
 '''3. Load data into psql'''
 # Connect to psql server
 conn = psycopg.connect(
-    host="sculptor.stat.cmu.edu", dbname="DB_USER",
-    user="DB_USER", password="DB_PASSWORD"
+    host="sculptor.stat.cmu.edu", dbname=credentials.DB_USER,
+    user=credentials.DB_USER, password=credentials.DB_PASSWORD
 )
 cur = conn.cursor()
 
