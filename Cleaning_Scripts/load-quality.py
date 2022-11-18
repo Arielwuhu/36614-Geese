@@ -16,8 +16,9 @@ quality = pd.read_csv("../Data/Quality/" + sys.argv[2])
 
 
 '''2. Data Preprocessing'''
-# Replace 'Not Available' value to NaN
-info1 = quality.replace('Not Available', np.nan)
+# Replace 'Not Available' and 'NaN' value to None
+quality = df.replace('Not Available', None)
+quality = quality.replace(np.nan, None)
 # Insert date column as python date object
 date = sys.argv[1]
 quality['Rating year'] = date
@@ -35,7 +36,7 @@ cur = conn.cursor()
 '''3.1 Hospital_Info(hospital_pk, name, address, city, state, zip_code,
 ownership, emergency)'''
 # Create a seperate table containing useful columns
-info_table = info1.loc[:, ['Facility ID', 'Facility Name', 'Address',
+info_table = quality.loc[:, ['Facility ID', 'Facility Name', 'Address',
                            'City', 'State', 'ZIP Code',
                            'Hospital Ownership', 'Emergency Services']]
 
@@ -62,7 +63,7 @@ num_rows_inserted = 0
 # make a new transaction
 with conn.transaction():
 
-    for index, row in info_table.iterrows():
+    for index, row in quality_table.iterrows():
         try:
             # make a new SAVEPOINT
             cur.execute("SAVEPOINT save1")
@@ -90,14 +91,9 @@ conn.commit()
 
 '''3.2 Rating(hospital_pk, rating_year, rating)'''
 # Create a seperate table containing useful columns
-rate_table = info1.loc[:, ["Facility ID",
+rate_table = quality.loc[:, ["Facility ID",
                            "Hospital overall rating",
                            "Ratingyear"]]
-rate_table["Facility ID"] = rate_table["Facility ID"].astype('string')
-rate_table["Hospital overall rating"] = rate_table["Hospital overallrating"]\
-                                        .astype('Int64')
-rate_table['Rating year'] = pd.to_datetime(rate_table['Rating year'],
-                                           format="%Y-%m-%d")
 
 # Container to record insert failed row
 key = ["hospital_pk",
@@ -116,21 +112,10 @@ with conn.transaction():
             cur.execute("SAVEPOINT save2")
             with conn.transaction():
                 # now insert  (hospital_pk, rating_year, rating) into the data
-                # since the rating will update several times a year, we
-                # have to keep the latest one on the table
                 insert = ("INSERT INTO Rating "
-                          "VALUES (%(hospital_pk)s,\
-                                   %(rating)s,\
-                                   %(rating_year)s)"
-                          "ON CONFLICT (hospital_pk) DO UPDATE "
-                          "SET rating = %(rating)s,\
-                               rating_year = %(rating_year)s")
+                          "VALUES (%s,%s,%s)")
 
-                cur.execute(insert, {
-                    "hospital_pk": row['Facility ID'],
-                    "rating": row['Hospital overall rating'],
-                    "rating_year": row['Rating year']
-                })
+                cur.execute(insert, tuple(row))
         except Exception as e:
             # if an exception/error happens in this block, Postgres
             # goes back to the last savepoint upon exiting the `with` block
