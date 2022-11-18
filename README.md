@@ -5,10 +5,22 @@
 
 Group Geese's data pipeline project.
 
-This repository contains our data
+This repository contains 
 
-    1. Health and Human Services (HHS) Data
-    2. Hospital Quality Data
+1. SQL Data Table Schema
 
-And the cleaning scripts to input our data into the SQL
+    - Hospital_Info
+    - Hospital_Coord
+    - Hospital_Stat
+    - Rating
+    
+2. Data
+
+    - Health and Human Services (HHS) Data
+    - Hospital Quality Data
+
+3. Cleaning scripts to input our data into the SQL
 data tables where our data is being stored.
+
+    - load-hhs.py
+    - load-quality.py
