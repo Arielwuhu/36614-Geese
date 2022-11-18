@@ -80,9 +80,10 @@ with conn.transaction():
             cur.execute("SAVEPOINT save1")
             with conn.transaction():
                 # now insert the data
+                # Avoid users accidentally insert same table twice
                 insert = ("INSERT INTO Hospital_Stat "
                           "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                          "ON CONFLICT (hos_week) DO NOTHING")
+                          "ON CONFLICT DO NOTHING")
                 cur.execute(insert, tuple(row))
 
         except Exception as e:

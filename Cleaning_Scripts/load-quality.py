@@ -49,9 +49,9 @@ info_table["City"] = info_table["City"].astype('string')
 info_table["State"] = info_table["State"].astype('string')
 info_table["ZIP Code"] = info_table["ZIP Code"].astype('string')
 info_table["Hospital Ownership"] = info_table[
-                                   "HospitalOwnership"].astype('string')
+                                   "Hospital Ownership"].astype('string')
 info_table["Emergency Services"] = info_table[
-                                   "EmergencyServices"].astype('bool')
+                                   "Emergency Services"].astype('bool')
 
 # Container to record insert failed row
 key = ['Facility ID', 'Facility Name',
@@ -94,7 +94,7 @@ conn.commit()
 # Create a seperate table containing useful columns
 rate_table = quality.loc[:, ["Facility ID",
                              "Hospital overall rating",
-                             "Ratingyear"]]
+                             "Rating year"]]
 
 # Container to record insert failed row
 key = ["hospital_pk",
