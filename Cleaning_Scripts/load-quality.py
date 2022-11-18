@@ -27,7 +27,7 @@ quality['Rating year'] = date
 # Connect to psql server
 conn = psycopg.connect(
     host="sculptor.stat.cmu.edu", dbname="yicheng6",
-    user="yicheng6", password="Oor4cah8p"
+    user="yicheng6", password=""
 )
 cur = conn.cursor()
 
