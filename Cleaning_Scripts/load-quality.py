@@ -17,7 +17,7 @@ quality = pd.read_csv("../Data/Quality/" + sys.argv[2])
 
 '''2. Data Preprocessing'''
 # Replace 'Not Available' and 'NaN' value to None
-quality = df.replace('Not Available', None)
+quality = quality.replace('Not Available', None)
 quality = quality.replace(np.nan, None)
 # Insert date column as python date object
 date = sys.argv[1]
@@ -37,8 +37,8 @@ cur = conn.cursor()
 ownership, emergency)'''
 # Create a seperate table containing useful columns
 info_table = quality.loc[:, ['Facility ID', 'Facility Name', 'Address',
-                           'City', 'State', 'ZIP Code',
-                           'Hospital Ownership', 'Emergency Services']]
+                             'City', 'State', 'ZIP Code',
+                             'Hospital Ownership', 'Emergency Services']]
 
 # Change the data type
 info_table["Facility ID"] = info_table["Facility ID"].astype('string')
@@ -63,7 +63,7 @@ num_rows_inserted = 0
 # make a new transaction
 with conn.transaction():
 
-    for index, row in quality_table.iterrows():
+    for index, row in info_table.iterrows():
         try:
             # make a new SAVEPOINT
             cur.execute("SAVEPOINT save1")
