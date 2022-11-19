@@ -163,7 +163,7 @@ with conn.transaction():
             num_rows_inserted += 1
 
     print('Inserted ' + str(num_rows_inserted) + ' rows for '
-          'Rating_Time table.')
+          'Rating table.')
     df_error = rate_table.iloc[error_index]
     df_error.to_csv("Error_row_ratingtime.csv", index=False)
 
