@@ -41,8 +41,9 @@ CREATE TABLE Hospital_Stat(
 /* 4: Rating_Time(hospital_pk, rating_year, rating)*/
 CREATE TABLE Rating(
 	hospital_pk varchar(255) REFERENCES Hospital_Info,
-    rating int CHECK (rating >= 0),
-	rating_year date CHECK (rating_year <= current_date));
+    	rating int CHECK (rating >= 0),
+	rating_year date CHECK (rating_year <= current_date),
+	CONSTRAINT rate_year UNIQUE (hospital_pk, rating_year));
 
 /*
 To ensure that we minimize the redundant information in our data tables we normalized our database schema to a 
