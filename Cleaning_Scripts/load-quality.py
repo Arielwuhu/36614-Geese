@@ -21,8 +21,7 @@ quality = pd.read_csv("../Data/Quality/" + sys.argv[2])
 quality = quality.replace('Not Available', None)
 quality = quality.replace(np.nan, None)
 # Insert date column as python date object
-date = sys.argv[1]
-date = date.split('-')[0]
+date = pd.to_datetime(sys.argv[1])
 quality['Rating year'] = date
 
 
@@ -105,7 +104,7 @@ with conn.transaction():
             num_rows_inserted += 1
 
     print('Inserted ' + str(num_rows_inserted) + ' rows for '
-          'Rating_Time table.')
+          'Hospital_Info table.')
     df_error = info_table.iloc[error_index]
     df_error.to_csv("Error_row_hospitalinfo.csv", index=False)
 
@@ -116,13 +115,13 @@ conn.commit()
 '''3.2 Rating(hospital_pk, rating_year, rating)'''
 # Create a seperate table containing useful columns
 rate_table = quality.loc[:, ["Facility ID",
-                             "Hospital overall rating",
-                             "Rating year"]]
+                             "Rating year",
+                             "Hospital overall rating"]]
 
 # Container to record insert failed row
 key = ["hospital_pk",
-       "Hospital overall rating",
-       "Rating year"]
+       "Rating year",
+       "Hospital overall rating"]
 df_error = pd.DataFrame(columns=key)
 
 
@@ -138,8 +137,8 @@ with conn.transaction():
             with conn.transaction():
                 # now insert  (hospital_pk, rating_year, rating) into the data
                 insert = ("INSERT INTO Rating "
-                          "VALUES (%(hospital_pk)s, %(rating_year)s,\
-                                  %(rating)s)"
+                          "VALUES (%(hospital_pk)s, %(rating)s,\
+                                   %(rating_year)s)"
                           "ON CONFLICT (hospital_pk, rating_year) DO UPDATE "
                           "SET hospital_pk = %(hospital_pk)s,\
                                rating = %(rating)s")
