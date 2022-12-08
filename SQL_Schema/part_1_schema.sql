@@ -28,22 +28,22 @@ CREATE TABLE Hospital_Coord(
 CREATE TABLE Hospital_Stat(
 	hospital_pk varchar(255),
 	collection_week date CHECK(collection_week <= current_date),
-	all_adult_hospital_beds numeric CHECK(all_adult_hospital_beds >= 0),
-	all_pediatric_inpatient_beds numeric CHECK(all_pediatric_inpatient_beds >= 0),
-	all_adult_hospital_inpatient_bed_occupied numeric CHECK(all_adult_hospital_inpatient_bed_occupied >= 0), 
-	all_pediatric_inpatient_bed_occupied numeric  CHECK(all_pediatric_inpatient_bed_occupied >= 0),
-	total_icu_beds numeric CHECK(total_icu_beds >= 0),
-	icu_beds_used numeric CHECK(icu_beds_used >= 0),
-	inpatient_beds_used_covid numeric CHECK(inpatient_beds_used_covid >= 0), 
-	staffed_adult_icu_patients_confirmed_covid numeric CHECK(staffed_adult_icu_patients_confirmed_covid >= 0),
+	all_adult_hospital_beds_7_day_avg numeric CHECK(all_adult_hospital_beds_7_day_avg >= 0),
+	all_pediatric_inpatient_beds_7_day_avg numeric CHECK(all_pediatric_inpatient_beds_7_day_avg >= 0),
+	all_adult_hospital_inpatient_bed_occupied_7_day_coverage numeric CHECK(all_adult_hospital_inpatient_bed_occupied_7_day_coverage >= 0), 
+	all_pediatric_inpatient_bed_occupied_7_day_avg numeric  CHECK(all_pediatric_inpatient_bed_occupied_7_day_avg >= 0),
+	total_icu_beds_7_day_avg numeric CHECK(total_icu_beds_7_day_avg >= 0),
+	icu_beds_used_7_day_avg numeric CHECK(icu_beds_used_7_day_avg >= 0),
+	inpatient_beds_used_covid_7_day_avg numeric CHECK(inpatient_beds_used_covid_7_day_avg >= 0), 
+	staffed_adult_icu_patients_confirmed_covid_7_day_avg numeric CHECK(staffed_adult_icu_patients_confirmed_covid_7_day_avg >= 0),
 	CONSTRAINT hos_week UNIQUE (hospital_pk, collection_week));
 
 /* 4: Rating_Time(hospital_pk, rating_year, rating)*/
 CREATE TABLE Rating(
-	hospital_pk varchar(255),
-	rating_year int CHECK (rating_year <= 2022),
-        rating int CHECK (rating >= 0),
-        CONSTRAINT hos_week UNIQUE (hospital_pk, rating_year));
+	hospital_pk varchar(255) REFERENCES Hospital_Info,
+    	rating int CHECK (rating >= 0),
+	rating_year date CHECK (rating_year <= current_date),
+	CONSTRAINT rate_year UNIQUE (hospital_pk, rating_year));
 
 /*
 To ensure that we minimize the redundant information in our data tables we normalized our database schema to a 
