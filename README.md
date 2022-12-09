@@ -24,7 +24,11 @@ data tables where our data is being stored.
 
     - load-hhs.py
     - load-quality.py
-
+    
+ 4. Analysis notebook containing the automated reporting 
+ for our data on a weekly basis.
+ 
+    - weekly-report.ipynb
 
 papermill weekly-report.ipynb 2022-10-21-report.ipynb -p collection_week 2022-10-21
 jupyter nbconvert --no-input --to html 2022-10-21-report.ipynb
