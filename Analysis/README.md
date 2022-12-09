@@ -1,11 +1,10 @@
 # Automated Reporting
 
 This repository contains the python notebook required for
-running an automated report of our HHS and quality data. Along with
-an example
+running an automated report of our HHS and quality data.
 
 The automated reporting occurs on a weekly basis and outputs an
-html file. 
+html file (provided in the repository). 
 
 There are some visualizations (primarily the choropleths)
 that render poorly onto PDFs resulting in some minor formatting 
