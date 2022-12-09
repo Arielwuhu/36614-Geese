@@ -24,3 +24,7 @@ data tables where our data is being stored.
 
     - load-hhs.py
     - load-quality.py
+
+
+papermill weekly-report.ipynb 2022-10-21-report.ipynb -p collection_week 2022-10-21
+jupyter nbconvert --no-input --to html 2022-10-21-report.ipynb
